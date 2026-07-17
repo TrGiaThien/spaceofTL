@@ -51,24 +51,24 @@
 
     /* Container đựng Trái Đất 3D */
     #canvas-container {
-    position: fixed; 
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100vh;
-    z-index: 1; /* Thay đổi từ -1 lên 1 để nhận sự kiện chuột */
-    pointer-events: auto; 
-    transition: opacity 0.5s ease;
+      position: fixed; 
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100vh;
+      z-index: 1; 
+      pointer-events: auto; 
+      transition: opacity 0.5s ease;
     }
 
     /* Đảm bảo nội dung các section không chặn chuột của Trái Đất */
     section {
-    position: relative;
-    z-index: 2; 
-    pointer-events: none; /* Chỉ các box mới nhận chuột */
+      position: relative;
+      z-index: 2; 
+      pointer-events: none; 
     }
     .glass-box {
-    pointer-events: auto;
+      pointer-events: auto;
     }
 
     /* Khắc phục lỗi vị trí của Canvas khi hạ cánh */
@@ -211,7 +211,7 @@
       transition: transform 0.5s ease;
     }
 
-    .image-container.b2, -image-container.b3{
+    .image-container.b2, .image-container.b3{
         transform: rotate(-2deg);
     }
 
@@ -319,7 +319,6 @@
       font-size: 0.75rem;
       letter-spacing: 2px;
       text-transform: uppercase;
-      text-align: center;
     }
 
     .mouse {
@@ -343,169 +342,245 @@
     }
 
     h1, p {
-     text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+      text-shadow: 0 2px 4px rgba(0,0,0,0.5);
     }
-
-    .slider-container {
-    position: relative;
-    width: 80%;
-    max-width: 800px;
-    margin: 20px auto; /* Giảm margin trên để thu hẹp khoảng cách */
-    overflow: hidden;
-    border-radius: 20px;
-}
-
-    .slider {
-        display: flex;
-        transition: transform 0.5s ease-in-out;
-    }
-
-    .prev, .next {
-        position: absolute;
-        top: 50%;
-        transform: translateY(-50%);
-        background: rgba(0,0,0,0.5);
-        color: white;
-        border: none;
-        padding: 15px;
-        cursor: pointer;
-    }
-    .prev { left: 10px; }
-    .next { right: 10px; }
-
-.slide { 
-    min-width: 100%; 
-}
-
-/* Quan trọng: Responsive ảnh */
-.slide img { 
-    width: 100%; 
-    height: auto; /* Tự động điều chỉnh chiều cao theo tỉ lệ */
-    display: block; 
-    object-fit: cover; /* Giúp ảnh không bị méo */
-}
-
-/* Style cho các chấm (dots) */
-.dots-container {
-    position: absolute; /* Chuyển thành absolute để đè lên slider */
-    bottom: 10px;      /* Căn sát mép dưới */
-    left: 50%;
-    transform: translateX(-50%);
-    display: flex;
-    gap: 8px;
-    z-index: 10;       /* Đảm bảo dots nổi trên ảnh */
-}
-
-  .dot {
-      height: 12px;
-      width: 12px;
-      background-color: #bbb;
-      border-radius: 50%;
-      cursor: pointer;
-      transition: background-color 0.3s;
-  }
-
-  .dot.active { background-color: #717171; }
-
-.slider {
-    display: flex;
-    transition: transform 0.5s ease-in-out;
-}
-.slide { min-width: 100%; }
-.slide img { width: 100%; display: block; border-radius: 20px; }
-.prev-btn, .next-btn {
-    position: absolute; top: 50%; transform: translateY(-50%);
-    background: rgba(255,255,255,0.3); border: none; cursor: pointer; padding: 10px;
-}
-.prev-btn { left: 10px; }
-.next-btn { right: 10px; }
-.dot { display: inline-block; width: 10px; height: 10px; background: #555; border-radius: 50%; margin: 0 5px; cursor: pointer; }
-.dot.active { background: #fff; }
 
     @keyframes scrollAnim {
       0% { top: 6px; opacity: 1; }
       100% { top: 18px; opacity: 0; }
     }
 
+    /* --- PHẦN THIẾT KẾ: BỨC THƯ & SLIDER TÍCH HỢP --- */
+    #box5 .glass-box {
+      max-width: 900px;
+      display: block; 
+      text-align: center;
+    }
+
+    /* Envelope (Phong bì chưa mở) */
+    .envelope-wrapper {
+      position: relative;
+      cursor: pointer;
+      perspective: 1000px;
+      margin: 30px auto;
+      max-width: 450px;
+      width: 100%;
+      transition: all 0.5s ease;
+      display: block; /* Mặc định hiển thị */
+    }
+
+    .envelope-wrapper.hidden {
+      display: none !important; /* Dùng lớp này để ẩn mượt phong bì */
+    }
+
+    .envelope-wrapper:hover {
+      transform: scale(1.03);
+    }
+
+    .envelope {
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(15px);
+      -webkit-backdrop-filter: blur(15px);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 20px;
+      padding: 40px 20px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .envelope .heart-btn {
+      font-size: 3.5rem;
+      color: #ff758c;
+      filter: drop-shadow(0 0 15px rgba(255,117,140,0.6));
+      animation: pulse 1.5s infinite alternate;
+      display: block;
+      margin: 15px auto;
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      100% { transform: scale(1.15); }
+    }
+
+    /* Thư chính thức (Mở ra khi click) */
+    .letter-content {
+      display: none; 
+      opacity: 0;
+      transform: translateY(30px);
+      transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .letter-content.show {
+      display: block;
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .letter-text {
+      text-align: left;
+      font-size: 1.05rem;
+      line-height: 1.8;
+      max-width: 650px;
+      margin: 0 auto 40px auto;
+      color: rgba(255, 255, 255, 0.9);
+      border-left: 3px solid #ff758c;
+      padding-left: 20px;
+    }
+
+    .letter-text p {
+       color: orange;
+       font-weight: bold;
+    }
+
+    /* Nút Đóng Thư cực xinh ở dưới cùng */
+    .close-letter-btn {
+      display: inline-block;
+      margin: 30px auto 10px auto;
+      padding: 12px 35px;
+      background: linear-gradient(45deg, #ff758c, #ff7eb3);
+      color: #fff;
+      font-weight: 600;
+      font-size: 0.9rem;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      border: none;
+      border-radius: 50px;
+      cursor: pointer;
+      box-shadow: 0 10px 25px rgba(255, 117, 140, 0.4);
+      transition: all 0.3s ease;
+    }
+
+    .close-letter-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 15px 30px rgba(255, 117, 140, 0.6);
+    }
+
+    .close-letter-btn:active {
+      transform: translateY(-1px);
+    }
+
+    /* Tối ưu hóa slider mới tích hợp */
+    .slider-container {
+      position: relative;
+      width: 100%;
+      max-width: 700px;
+      margin: 30px auto 10px auto;
+      overflow: hidden;
+      border-radius: 20px;
+      border: 1px solid rgba(255,255,255,0.1);
+      box-shadow: 0 15px 35px rgba(0,0,0,0.4);
+    }
+
+    .slider {
+      display: flex;
+      transition: transform 0.5s ease-in-out;
+      width: 100%;
+    }
+
+    .slide { 
+      min-width: 100%; 
+    }
+
+    .slide img { 
+      width: 100%; 
+      height: 450px; 
+      object-fit: cover; 
+      display: block; 
+    }
+
+    .prev-btn, .next-btn {
+      position: absolute; 
+      top: 50%; 
+      transform: translateY(-50%);
+      background: rgba(0, 0, 0, 0.5); 
+      backdrop-filter: blur(5px);
+      border: 1px solid rgba(255,255,255,0.1);
+      color: white;
+      font-size: 1.2rem;
+      cursor: pointer; 
+      padding: 15px;
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      transition: 0.3s;
+      z-index: 5;
+    }
+
+    .prev-btn:hover, .next-btn:hover {
+      background: rgba(255, 117, 140, 0.8);
+    }
+
+    .prev-btn { left: 15px; }
+    .next-btn { right: 15px; }
+
+    .dots-container { 
+      position: absolute;
+      bottom: 15px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex; 
+      gap: 8px;
+      z-index: 5;
+    }
+
+    .dot { 
+      width: 10px; 
+      height: 10px; 
+      background: rgba(255, 255, 255, 0.4); 
+      border-radius: 50%; 
+      cursor: pointer; 
+      transition: 0.3s;
+    }
+
+    .dot.active { 
+      background: #ff758c; 
+      transform: scale(1.2);
+    }
+
     /* RESPONSIVE DESIGN */
     @media (max-width: 1024px) {
-      header {
-        padding: 12px 20px;
-      }
-      nav ul {
-        gap: 15px;
-      }
-      nav ul li a {
-        font-size: 0.8rem;
-      }
-      .glass-box {
-        gap: 30px;
-        padding: 30px;
-      }
-      h1 {
-        font-size: 2rem;
-      }
+      header { padding: 12px 20px; }
+      nav ul { gap: 15px; }
+      nav ul li a { font-size: 0.8rem; }
+      .glass-box { gap: 30px; padding: 30px; }
+      h1 { font-size: 2rem; }
     }
 
     @media (max-width: 768px) {
-      header {
-        width: 95%;
-        top: 10px;
-        border-radius: 20px;
-      }
-      nav ul {
-        gap: 10px;
-      }
-      nav ul li a {
-        font-size: 0.75rem;
-      }
-      .glass-box {
-        grid-template-columns: 1fr;
-        gap: 30px;
-        max-width: 450px;
-        margin: 0 auto;
-      }
-      .box-content {
-        order: 2;
-        align-items: center;
-        text-align: center;
-      }
-      .box-media {
-        order: 1;
-      }
-      .badge {
-        align-self: center;
-      }
-      section {
-        padding: 100px 20px 40px 20px;
-      }
-      .image-container {
-        max-width: 260px;
-      }
+      header { width: 95%; top: 10px; border-radius: 20px; }
+      nav ul { gap: 10px; }
+      nav ul li a { font-size: 0.75rem; }
+      .glass-box { grid-template-columns: 1fr; gap: 30px; max-width: 450px; margin: 0 auto; }
+      .box-content { order: 2; align-items: center; text-align: center; }
+      .box-media { order: 1; }
+      .badge { align-self: center; }
+      section { padding: 100px 20px 40px 20px; }
+      .image-container { max-width: 260px; }
+      .slide img { height: 320px; }
     }
 
     @media (max-width: 480px) {
-      .logo {
-        font-size: 1rem;
-      }
-      nav ul {
-        display: none; 
-      }
-      h1 {
-        font-size: 1.6rem;
-      }
-      p {
-        font-size: 0.85rem;
-      }
-      .glass-box {
-        padding: 20px;
-      }
+      .logo { font-size: 1rem; }
+      nav ul { display: none; }
+      h1 { font-size: 1.6rem; }
+      p { font-size: 0.85rem; }
+      .glass-box { padding: 20px; }
+      .slide img { height: 260px; }
     }
   </style>
 </head>
 <body>
 
   <div class="stars"></div>
+
+  <!-- Thẻ Audio Ẩn để phát nhạc tự động sau khi bấm thư -->
+  <audio id="love-music" loop>
+    <source src="https://cdn.discordapp.com/attachments/1527336198991908867/1527604439215640678/Ai_Ngoai_Anh.mp3?ex=6a5b43ff&is=6a59f27f&hm=62356eb27e8aa1efebe7e20b2310446b5a704662ad354141b3bd70a8394a96c7&" type="audio/mpeg">
+  </audio>
 
   <!-- Container chứa Trái Đất 3D -->
   <div id="canvas-container"></div>
@@ -529,7 +604,7 @@
     <div class="glass-box visible">
       <span class="badge">Vũ Trụ Bao La</span>
       <h1>Định Mệnh,<br>Đã Cho Anh Tìm Thấy <span class="pink-gradient">Em</span></h1>
-      <p>Tuy ta đến với nhau khi có những áp lực trong học tập và thi cử. Nhưng chúng ta đã cùng nhau vượt qua nó.</p>
+      <p>Tuy ta đến với nhau khi có những áp lực trong học tập và thi cử. Nhưng chúng ta đã cùng nhau vượt qua nó</p>
     </div>
     <div class="scroll-indicator">
       <span>Em hãy kéo xuống dưới thử</span>
@@ -593,52 +668,73 @@
     </div>
   </section>
 
-  <!-- Box 5 -->
+  <!-- Box 5 (Bức Thư Tích Hợp Slider + Âm Nhạc) -->
   <section id="box5">
     <div class="glass-box">
-      <div class="box-content">
-        <span class="badge">Tương lai sau này</span>
-        <h1>Hy vọng rằng</h1>
-        <p>Dù có khó khăn, hay chán nhau đi chăng nữa, chúng ta hãy cùng nhau vượt qua cố gắng vì nhau và hạnh phúc với nhau suốt đời.</p>
-      </div>
-      <div class="box-media">
-        <div class="image-container b3">
-          <img src="https://cdn.discordapp.com/attachments/1527336198991908867/1527341393209462874/IMG_2167.jpg?ex=6a5a4f04&is=6a58fd84&hm=8b7e6b7709593536e3378bc9c5a7c72a98112c28e415417f02e59230ea2fa619&" alt="Anh kỷ niệm 4">
-          <div class="image-caption">Manifest will be together forever 💖</div>
+      
+      <!-- PHONG BÌ CHƯA MỞ -->
+      <div class="envelope-wrapper" id="envelope-btn">
+        <div class="envelope">
+          <span class="badge">A Letter for You</span>
+          <h2 style="font-size: 1.4rem; margin-top: 10px;">Bức thư gửi đến em...</h2>
+          <p style="margin: 10px 0 20px 0; font-size: 0.85rem; color: rgba(255,255,255,0.6);">Chạm vào trái tim để mở ra điều đặc biệt</p>
+          <div class="heart-btn">❤️</div>
         </div>
+      </div>
+
+      <!-- NỘI DUNG THƯ KHI CLICK MỞ -->
+      <div class="letter-content" id="letter-content">
+        <span class="badge">Mãi Bên Nhau</span>
+        <h1 class="pink-gradient">Happy 5-Month Anniversary!</h1>
+        
+        <!-- LỜI CHÚC LÃNG MẠN -->
+        <div class="letter-text">
+          <p>Gửi Cá của anh,</p>
+          <p>Chắc nãy giờ em cũng đã đọc được tóm tắt hành trình của chúng ta phía trên rồi nhỉ? Anh cũng không biết phải bắt đầu từ đâu nữa, từ khi nào a lại quyết tâm theo đuổi e. Nhưng rồi may mắn sao, chúng ta đã đến bên nhau.</p>
+          <p>Bắt đầu từ những ngày a ở lại giúp lớp e làm trại nhé, lúc đó a đã muốn chở e từ lâu nên a đã ở lại phụ e để được chở e về (một phần cũng vì lo để con gái đi đêm khuya 1 mình cũng nguy hiểm). Lúc đó tụi mình đã trò chuyện rất nhiều và mối quan hệ của tụi mình có những bước tiến triển.</p>
+          <p>Anh hong giỏi nói chuyện, hay khéo mồm nên lúc quen a có nói vài lời làm e cọc hay khó chịu. Nhưng a hong hề cố ý làm vậy chỉ là a muốn giỡn cho vui nhưng đôi khi nó là quá lố.</p>
+          <p>Rồi kỳ thi TN THPT cũng dần đến sát hơn, chúng mình có nhiều áp lực hơn đôi khi hong còn dịu dàng dành cho nhau nhưng vì có e ở bên a, a đã cảm thấy thoải mái và đỡ stress hơn. Chia sẻ nhau những mẫu chuyện buồn, vui và chia sẻ nhau từng khoảng khắc trong ngày. Đó là động lực rất lớn cho a để a vượt qua năm 12 đầy sống gió này.</p>
+          <p>A hong giỏi văn vẽ nên thư chỉ viết đến đây hoi. Nhưng hy vọng rằng dù sau này có khó khăn hay gì đi chăng nữa, hay a có lỡ giỡn nhây quá thì chúng ta vẫn đủ dung thứ để cùng giúp nhau trở nên tốt hơn, cùng nhau vượt qua những khó khăn trong đường đời sắp tới.</p>
+          <p>Love you with all my heart 💖</p>
+          <p>From your special 🐽</p>
+        </div>
+
+        <!-- IMAGE SLIDER ĐÃ ĐƯỢC TÍCH HỢP VÀO TRONG THƯ -->
+        <div class="slider-container">
+          <div class="slider" id="main-slider">
+              <div class="slide"><img src="https://cdn.discordapp.com/attachments/1527336198991908867/1527341393209462874/IMG_2167.jpg?ex=6a5af7c4&is=6a59a644&hm=a707e4072c4c86e92d04ffe4b606eeeee9878860e8dec78618e07ea9fd5009f1&" alt="Slide 1"></div>
+              <div class="slide"><img src="https://cdn.discordapp.com/attachments/1527336198991908867/1527343389434183821/PixelB-1777081333527.jpg?ex=6a5a50e0&is=6a58ff60&hm=3d6f08e2963906d95ce5acb9ae66308fbe81e95b95f076fdc9e7c4ff14977424&" alt="Slide 2"></div>
+              <div class="slide"><img src="https://cdn.discordapp.com/attachments/1527336198991908867/1527343389807345764/PixelB-1774199623946.jpg?ex=6a5a50e0&is=6a58ff60&hm=d5c8d4b5914207b7382f03eaa225304496cb131a9bf9731ae960502aa90e9609&" alt="Slide 3"></div>
+              <div class="slide"><img src="https://cdn.discordapp.com/attachments/1527336198991908867/1527343390239227947/PixelB-1774199619550.jpg?ex=6a5a50e0&is=6a58ff60&hm=89e1f103738e9e8bad82fdf63a90507f8859c57f8fa5cf2c2b1976b6eb4b46cc&" alt="Slide 4"></div>
+              <div class="slide"><img src="https://cdn.discordapp.com/attachments/1527336198991908867/1527343390671372471/PixelB-1774199556213.jpg?ex=6a5a50e1&is=6a58ff61&hm=3351fdc6f4b45b8df8d3ecad9ff2b6c93a0f128c9f54204ad130644ab085bd8c&" alt="Slide 5"></div>
+              <div class="slide"><img src="https://cdn.discordapp.com/attachments/1527336198991908867/1527343391262900354/PixelB-1777081492949.jpg?ex=6a5a50e1&is=6a58ff61&hm=b5e9eb9276948fcefbc06ba503012afb687145b86e6ab63ad693233d86271210&" alt="Slide 6"></div>
+              <div class="slide"><img src="https://cdn.discordapp.com/attachments/1527336198991908867/1527343391887720600/PixelB-1777081473785.jpg?ex=6a5a50e1&is=6a58ff61&hm=65a5737db9cc6e577fa04130c64037f9776083e1b3cedda3101dadf1be11de6b&" alt="Slide 7"></div>
+              <div class="slide"><img src="https://cdn.discordapp.com/attachments/1527336198991908867/1527343392458149959/PixelB-1777081468632.jpg?ex=6a5a50e1&is=6a58ff61&hm=549c27e74b04132979043870e823b8a3464959d7bcd8443525ceaea793ff9b83&" alt="Slide 8"></div>
+              <div class="slide"><img src="https://cdn.discordapp.com/attachments/1527336198991908867/1527343393192284291/PixelB-1777081483589.jpg?ex=6a5a50e1&is=6a58ff61&hm=0c16a3ec9445e245d729f63e21fa67c8d8e3b477d5ebee5b4fcee5a4d8447231&" alt="Slide 9"></div>
+              <div class="slide"><img src="https://cdn.discordapp.com/attachments/1527336198991908867/1527343393959837716/PixelB-1777081497812.jpg?ex=6a5a50e1&is=6a58ff61&hm=e796f373e60a383586dc5eb1342d7589dba47c01c65f00103bc7042dfe79285f&" alt="Slide 10"></div>
+              <div class="slide"><img src="https://cdn.discordapp.com/attachments/1527336198991908867/1527346169368416429/20260208_212509.jpg?ex=6a5a5377&is=6a5901f7&hm=38dffafeb5c5286cfd14500df374d4d8cc0a82ab1367e850c4823a0ad973b4ff&" alt="Slide 11"></div>
+              <div class="slide"><img src="https://cdn.discordapp.com/attachments/1527336198991908867/1527346170089701446/IMG_1770827487443_17708291775931.jpg?ex=6a5a5377&is=6a5901f7&hm=806699b179b49ce20a8da340e0a3b98348c75f30d3cf5292a158a9991eb15511&" alt="Slide 12"></div>
+              <div class="slide"><img src="https://cdn.discordapp.com/attachments/1527336198991908867/1527346170387628164/Locket_1771901835586_27.jpg?ex=6a5a5377&is=6a5901f7&hm=f97a2230f15094ee997f6212b6167ca98b0b7f6501415c5901885bec38038c6c&" alt="Slide 13"></div>
+              <div class="slide"><img src="https://cdn.discordapp.com/attachments/1527336198991908867/1527346170794344712/Locket_1772196962644_8.jpg?ex=6a5a5377&is=6a5901f7&hm=e15685a2ed04c4cddcfac3913436581dc6e36f45df6e0e37c1d54ae7549c7cfb&" alt="Slide 14"></div>
+              <div class="slide"><img src="https://cdn.discordapp.com/attachments/1527336198991908867/1527346171213779106/Messenger_creation_8B0FA316-374B-434D-93AF-5A81B4873139.jpg?ex=6a5a5377&is=6a5901f7&hm=3892303a5125077c408b2e8d69e46c2244f7d539273b1225e14a73ede0a29ca3&" alt="Slide 15"></div>
+              <div class="slide"><img src="https://cdn.discordapp.com/attachments/1527336198991908867/1527346171864023211/Screenshot_20260307_115017_Instagram1.png?ex=6a5a5378&is=6a5901f8&hm=1b96cb45774a22ec9485c55faded3923c8a1ca56b1a5d68629248e6abd909930&" alt="Slide 16"></div>
+              <div class="slide"><img src="https://cdn.discordapp.com/attachments/1527336198991908867/1527346172518203422/20260323_090748.jpg?ex=6a5a5378&is=6a5901f8&hm=df693a2fedbda8ebbf46befda26f6b1ce297ac08c3c3c9ba549d94ca780f71d9&" alt="Slide 17"></div>
+              <div class="slide"><img src="https://cdn.discordapp.com/attachments/1527336198991908867/1527346172975513730/IMG_20260411_205710_288.jpg?ex=6a5a5378&is=6a5901f8&hm=72e1efb1e9bbe89567947f042f687e02d800d2636d227b7e907f74d3f2661849&" alt="Slide 18"></div>
+              <div class="slide"><img src="https://cdn.discordapp.com/attachments/1527336198991908867/1527347804882862391/PixelB-1774199829412.jpg?ex=6a5a54fd&is=6a59037d&hm=247e8f34c311dc70e66f16efd1b8978d5b07a2f33e268818949a045c5fe25636&" alt="Slide 19"></div>
+              <div class="slide"><img src="https://cdn.discordapp.com/attachments/1527336198991908867/1527347805549629470/PixelB-1774199850856.jpg?ex=6a5a54fd&is=6a59037d&hm=f8ed78212645f93e9af017cbe9de0146c51c22ff1183e4b66db09027ef79ab1f&" alt="Slide 20"></div>
+              <div class="slide"><img src="https://cdn.discordapp.com/attachments/1527336198991908867/1527347806019518626/PixelB-1774199820226.jpg?ex=6a5a54fd&is=6a59037d&hm=100cf57afd4d17215671b97cff62946de6c44e3685d7a4308b13dd06cf4b32f0&" alt="Slide 21"></div>
+          </div>
+          <button class="prev-btn">&#10094;</button>
+          <button class="next-btn">&#10095;</button>
+          <div class="dots-container" id="dotsContainer"></div>
+        </div>
+
+        <!-- NÚT ĐÓNG THƯ VỪA ĐƯỢC THIẾT KẾ THÊM -->
+        <button class="close-letter-btn" id="close-letter-btn">Đóng thư lại 🌸</button>
+
       </div>
     </div>
   </section>
-    <!-- <section class="section slider-section">
-    <div class="slider-container" id="main-slider">
-        <div class="slider">
-            <div class="slide"><img src="https://cdn.discordapp.com/attachments/1527336198991908867/1527343389434183821/PixelB-1777081333527.jpg?ex=6a5a50e0&is=6a58ff60&hm=3d6f08e2963906d95ce5acb9ae66308fbe81e95b95f076fdc9e7c4ff14977424&" alt="Slide 1"></div>
-            <div class="slide"><img src="https://cdn.discordapp.com/attachments/1527336198991908867/1527343389807345764/PixelB-1774199623946.jpg?ex=6a5a50e0&is=6a58ff60&hm=d5c8d4b5914207b7382f03eaa225304496cb131a9bf9731ae960502aa90e9609&" alt="Slide 2"></div>
-            <div class="slide"><img src="https://cdn.discordapp.com/attachments/1527336198991908867/1527343390239227947/PixelB-1774199619550.jpg?ex=6a5a50e0&is=6a58ff60&hm=89e1f103738e9e8bad82fdf63a90507f8859c57f8fa5cf2c2b1976b6eb4b46cc&" alt="Slide 3"></div>
-            <div class="slide"><img src="https://cdn.discordapp.com/attachments/1527336198991908867/1527343390671372471/PixelB-1774199556213.jpg?ex=6a5a50e1&is=6a58ff61&hm=3351fdc6f4b45b8df8d3ecad9ff2b6c93a0f128c9f54204ad130644ab085bd8c&" alt="Slide 4"></div>
-            <div class="slide"><img src="https://cdn.discordapp.com/attachments/1527336198991908867/1527343391262900354/PixelB-1777081492949.jpg?ex=6a5a50e1&is=6a58ff61&hm=b5e9eb9276948fcefbc06ba503012afb687145b86e6ab63ad693233d86271210&" alt="Slide 5"></div>
-            <div class="slide"><img src="https://cdn.discordapp.com/attachments/1527336198991908867/1527343391887720600/PixelB-1777081473785.jpg?ex=6a5a50e1&is=6a58ff61&hm=65a5737db9cc6e577fa04130c64037f9776083e1b3cedda3101dadf1be11de6b&" alt="Slide 6"></div>
-            <div class="slide"><img src="https://cdn.discordapp.com/attachments/1527336198991908867/1527343392458149959/PixelB-1777081468632.jpg?ex=6a5a50e1&is=6a58ff61&hm=549c27e74b04132979043870e823b8a3464959d7bcd8443525ceaea793ff9b83&" alt="Slide 7"></div>
-            <div class="slide"><img src="https://cdn.discordapp.com/attachments/1527336198991908867/1527343393192284291/PixelB-1777081483589.jpg?ex=6a5a50e1&is=6a58ff61&hm=0c16a3ec9445e245d729f63e21fa67c8d8e3b477d5ebee5b4fcee5a4d8447231&" alt="Slide 8"></div>
-            <div class="slide"><img src="https://cdn.discordapp.com/attachments/1527336198991908867/1527343393959837716/PixelB-1777081497812.jpg?ex=6a5a50e1&is=6a58ff61&hm=e796f373e60a383586dc5eb1342d7589dba47c01c65f00103bc7042dfe79285f&" alt="Slide 9"></div>
-            <div class="slide"><img src="https://cdn.discordapp.com/attachments/1527336198991908867/1527346169368416429/20260208_212509.jpg?ex=6a5a5377&is=6a5901f7&hm=38dffafeb5c5286cfd14500df374d4d8cc0a82ab1367e850c4823a0ad973b4ff&" alt="Slide 10"></div>
-            <div class="slide"><img src="https://cdn.discordapp.com/attachments/1527336198991908867/1527346170089701446/IMG_1770827487443_17708291775931.jpg?ex=6a5a5377&is=6a5901f7&hm=806699b179b49ce20a8da340e0a3b98348c75f30d3cf5292a158a9991eb15511&" alt="Slide 11"></div>
-            <div class="slide"><img src="https://cdn.discordapp.com/attachments/1527336198991908867/1527346170387628164/Locket_1771901835586_27.jpg?ex=6a5a5377&is=6a5901f7&hm=f97a2230f15094ee997f6212b6167ca98b0b7f6501415c5901885bec38038c6c&" alt="Slide 12"></div>
-            <div class="slide"><img src="https://cdn.discordapp.com/attachments/1527336198991908867/1527346170794344712/Locket_1772196962644_8.jpg?ex=6a5a5377&is=6a5901f7&hm=e15685a2ed04c4cddcfac3913436581dc6e36f45df6e0e37c1d54ae7549c7cfb&" alt="Slide 13"></div>
-            <div class="slide"><img src="https://cdn.discordapp.com/attachments/1527336198991908867/1527346171213779106/Messenger_creation_8B0FA316-374B-434D-93AF-5A81B4873139.jpg?ex=6a5a5377&is=6a5901f7&hm=3892303a5125077c408b2e8d69e46c2244f7d539273b1225e14a73ede0a29ca3&" alt="Slide 14"></div>
-            <div class="slide"><img src="https://cdn.discordapp.com/attachments/1527336198991908867/1527346171864023211/Screenshot_20260307_115017_Instagram1.png?ex=6a5a5378&is=6a5901f8&hm=1b96cb45774a22ec9485c55faded3923c8a1ca56b1a5d68629248e6abd909930&" alt="Slide 15"></div>
-            <div class="slide"><img src="https://cdn.discordapp.com/attachments/1527336198991908867/1527346172518203422/20260323_090748.jpg?ex=6a5a5378&is=6a5901f8&hm=df693a2fedbda8ebbf46befda26f6b1ce297ac08c3c3c9ba549d94ca780f71d9&" alt="Slide 16"></div>
-            <div class="slide"><img src="https://cdn.discordapp.com/attachments/1527336198991908867/1527346172975513730/IMG_20260411_205710_288.jpg?ex=6a5a5378&is=6a5901f8&hm=72e1efb1e9bbe89567947f042f687e02d800d2636d227b7e907f74d3f2661849&" alt="Slide 17"></div>
-            <div class="slide"><img src="https://cdn.discordapp.com/attachments/1527336198991908867/1527347804882862391/PixelB-1774199829412.jpg?ex=6a5a54fd&is=6a59037d&hm=247e8f34c311dc70e66f16efd1b8978d5b07a2f33e268818949a045c5fe25636&" alt="Slide 18"></div>
-            <div class="slide"><img src="https://cdn.discordapp.com/attachments/1527336198991908867/1527347805549629470/PixelB-1774199850856.jpg?ex=6a5a54fd&is=6a59037d&hm=f8ed78212645f93e9af017cbe9de0146c51c22ff1183e4b66db09027ef79ab1f&" alt="Slide 19"></div>
-            <div class="slide"><img src="https://cdn.discordapp.com/attachments/1527336198991908867/1527347806019518626/PixelB-1774199820226.jpg?ex=6a5a54fd&is=6a59037d&hm=100cf57afd4d17215671b97cff62946de6c44e3685d7a4308b13dd06cf4b32f0&" alt="Slide 20"></div>
-            
-        </div>
-        <button class="prev-btn">&#10094;</button>
-        <button class="next-btn">&#10095;</button>
-        <div class="dots-container" id="dotsContainer"></div>
-    </div>
-    </section> -->
 
   <!-- Thư viện Three.js -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
@@ -691,25 +787,21 @@
     }
 
     // --- 2. THUẬT TOÁN TỰ VẼ BẢN ĐỒ TRÁI ĐẤT KHÔNG CẦN TẢI FILE NGOÀI (NO CORS) ---
-    // Hàm sinh Texture Trái Đất (đất liền màu xanh lá/nâu, đại dương xanh dương thẳm)
     function createProceduralEarthTexture() {
       const canvas = document.createElement('canvas');
       canvas.width = 1024;
       canvas.height = 512;
       const ctx = canvas.getContext('2d');
       
-      // Đại dương
       ctx.fillStyle = '#051330';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-      // Hàm vẽ đất liền dạng sóng mảng ngẫu nhiên (Mô phỏng lục địa)
       function drawContinent(x, y, w, h, color) {
         ctx.fillStyle = color;
         ctx.beginPath();
         ctx.ellipse(x, y, w, h, 0, 0, Math.PI * 2);
         ctx.fill();
         
-        // Thêm các nhánh lục địa gồ ghề tự nhiên bằng các vòng tròn nhỏ rìa ngoài
         for (let i = 0; i < 15; i++) {
           const rx = x + (Math.random() - 0.5) * w * 1.5;
           const ry = y + (Math.random() - 0.5) * h * 1.5;
@@ -720,40 +812,29 @@
         }
       }
 
-      // Châu Mỹ (Bên Trái)
-      drawContinent(280, 240, 100, 180, '#10391d'); // Bắc & Nam Mỹ liên kết
+      drawContinent(280, 240, 100, 180, '#10391d'); 
       drawContinent(250, 150, 90, 70, '#144d25');
-      
-      // Châu Phi & Châu Âu (Giữa)
-      drawContinent(520, 230, 90, 110, '#19542a'); // Châu Phi
-      drawContinent(540, 110, 110, 60, '#1c5e30'); // Châu Âu
-
-      // Châu Á (Bên Phải)
-      drawContinent(760, 150, 160, 100, '#164a25'); // Châu Á đại lục
-      drawContinent(850, 240, 60, 40, '#19542a');  // Đông Nam Á
-      
-      // Châu Úc (Dưới cùng bên phải)
+      drawContinent(520, 230, 90, 110, '#19542a'); 
+      drawContinent(540, 110, 110, 60, '#1c5e30'); 
+      drawContinent(760, 150, 160, 100, '#164a25'); 
+      drawContinent(850, 240, 60, 40, '#19542a');  
       drawContinent(880, 380, 70, 50, '#123d1e');
 
-      // Nam Cực (Băng tuyết trắng dải đáy)
       ctx.fillStyle = '#f0f4f8';
       ctx.fillRect(0, 470, canvas.width, 42);
 
       return new THREE.CanvasTexture(canvas);
     }
 
-    // Hàm sinh bản đồ phản xạ nước (Đại dương phản chiếu mạnh, đất liền không phản chiếu)
     function createProceduralSpecularMap() {
       const canvas = document.createElement('canvas');
       canvas.width = 512;
       canvas.height = 256;
       const ctx = canvas.getContext('2d');
       
-      // Đại dương phản quang cao (màu đen đại diện cho độ nhám = 0 / bóng mượt)
       ctx.fillStyle = '#000000';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-      // Đất liền nhám hoàn toàn (màu trắng đại diện cho độ nhám = 1 / thô lỳ)
       function drawSpecContinent(x, y, w, h) {
         ctx.fillStyle = '#ffffff';
         ctx.beginPath();
@@ -777,23 +858,19 @@
       drawSpecContinent(425, 120, 30, 20);
       drawSpecContinent(440, 190, 35, 25);
       
-      // Nam Cực nhám hoàn toàn
       ctx.fillStyle = '#ffffff';
       ctx.fillRect(0, 235, canvas.width, 21);
 
       return new THREE.CanvasTexture(canvas);
     }
 
-    // Hàm sinh dải mây khí quyển chuyển động sống động
     function createProceduralCloudTexture() {
       const canvas = document.createElement('canvas');
       canvas.width = 1024;
       canvas.height = 512;
       const ctx = canvas.getContext('2d');
-      
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-      // Tạo các dải mây mềm mịn ngẫu nhiên bằng gradient tỏa
       for (let i = 0; i < 25; i++) {
         const cx = Math.random() * canvas.width;
         const cy = 100 + Math.random() * 312;
@@ -827,7 +904,6 @@
     renderer.toneMappingExposure = 1.3;
     container.appendChild(renderer.domElement);
 
-    // --- THIẾT LẬP ÁNH SÁNG CHÂN THỰC VŨ TRỤ ---
     const ambientLight = new THREE.AmbientLight(0x050c18, 0.35);
     scene.add(ambientLight);
 
@@ -844,23 +920,20 @@
     const earthGroup = new THREE.Group();
     scene.add(earthGroup);
 
-    // Dựng mô hình Trái Đất PBR sử dụng các Canvas Texture tự sinh
-    let earthGeometry = new THREE.SphereGeometry(2, 32, 32);
-    earthGeometry = new THREE.SphereGeometry(2.5, 32, 32);
+    let earthGeometry = new THREE.SphereGeometry(2.5, 32, 32);
     
     const earthMaterial = new THREE.MeshStandardMaterial({
-  map: createProceduralEarthTexture(),
-  roughnessMap: createProceduralSpecularMap(),
-  metalness: 0.08,
-  roughness: 1.0,
-  transparent: true, // <--- Đảm bảo có dòng này
-  depthWrite: true   // <--- Đảm bảo có dòng này để nó không đè lên text
-});
+      map: createProceduralEarthTexture(),
+      roughnessMap: createProceduralSpecularMap(),
+      metalness: 0.08,
+      roughness: 1.0,
+      transparent: true,
+      depthWrite: true  
+    });
     
     const earthMesh = new THREE.Mesh(earthGeometry, earthMaterial);
     earthGroup.add(earthMesh);
 
-    // --- 3.1 LỚP MÂY PHIÊU DẠT TỰ NHIÊN ---
     const cloudGeometry = new THREE.SphereGeometry(earthRadius + 0.02, 64, 64);
     const cloudMaterial = new THREE.MeshStandardMaterial({
       alphaMap: createProceduralCloudTexture(),
@@ -873,7 +946,6 @@
     const cloudMesh = new THREE.Mesh(cloudGeometry, cloudMaterial);
     earthGroup.add(cloudMesh);
 
-    // --- 3.2 KHÍ QUYỂN PHÁT SÁNG THEO HƯỚNG MẶT TRỜI (SHADER CHUYÊN SÂU) ---
     const atmosphereGeometry = new THREE.SphereGeometry(earthRadius + 0.08, 64, 64);
     const atmosphereMaterial = new THREE.ShaderMaterial({
       vertexShader: `
@@ -913,7 +985,6 @@
     const atmosphereMesh = new THREE.Mesh(atmosphereGeometry, atmosphereMaterial);
     earthGroup.add(atmosphereMesh);
 
-    // --- 3.3 ĐỊNH VỊ VIỆT NAM (TỐI GIẢN CHÂN THỰC) ---
     const lat = 16.5;
     const lon = 107.5;
     const phi = (90 - lat) * (Math.PI / 180);
@@ -941,7 +1012,6 @@
     vnHalo.lookAt(x * 1.5, y * 1.5, z * 1.5);
     earthGroup.add(vnHalo);
 
-    // --- 4. ĐIỀU PHỐI CHUYỂN ĐỘNG & TƯƠNG TÁC CHUỘT ---
     const targetRotationX = -phi + Math.PI / 2;
     const targetRotationY = -theta + Math.PI;
 
@@ -980,7 +1050,6 @@
 
       userRotationOffset.y += deltaX * 0.005;
       userRotationOffset.x += deltaY * 0.005;
-
       userRotationOffset.x = Math.max(-Math.PI / 2.5, Math.min(Math.PI / 2.5, userRotationOffset.x));
 
       previousMousePosition = { x: clientX, y: clientY };
@@ -992,10 +1061,8 @@
 
     container.addEventListener('mousedown', onPointerDown);
     container.addEventListener('touchstart', onPointerDown, { passive: true });
-
     window.addEventListener('mousemove', onPointerMove);
     window.addEventListener('touchmove', onPointerMove, { passive: true });
-
     window.addEventListener('mouseup', onPointerUp);
     window.addEventListener('touchend', onPointerUp);
     
@@ -1003,11 +1070,8 @@
       requestAnimationFrame(animate);
       const time = clock.getElapsedTime();
       
-      // Nhịp đập định vị Việt Nam
       vnHalo.scale.setScalar(1 + Math.sin(time * 6) * 0.2);
       vnHalo.material.opacity = 0.5 + Math.sin(time * 6) * 0.3;
-
-      // Mây trôi tự nhiên xung quanh Trái Đất
       cloudMesh.rotation.y = time * 0.005;
 
       const scrollTop = window.scrollY;
@@ -1100,13 +1164,10 @@
 
     window.addEventListener('resize', () => {
       if (isLanded) {
-    // Để marker luôn hiển thị, bạn có thể cho Trái Đất tự xoay chậm khi đang ở trong ô
-    earthGroup.position.set(0, 0, 0);
-    earthGroup.scale.setScalar(1.25);
-    
-    // Đảm bảo rotation nhận input từ userDragging
-    earthGroup.rotation.x = targetRotationX + userRotationOffset.x;
-    earthGroup.rotation.y = targetRotationY + userRotationOffset.y;
+        earthGroup.position.set(0, 0, 0);
+        earthGroup.scale.setScalar(1.25);
+        earthGroup.rotation.x = targetRotationX + userRotationOffset.x;
+        earthGroup.rotation.y = targetRotationY + userRotationOffset.y;
       } else {
         renderer.setSize(window.innerWidth, window.innerHeight);
         camera.aspect = window.innerWidth / window.innerHeight;
@@ -1114,45 +1175,95 @@
       }
       camera.updateProjectionMatrix();
     });
-  document.addEventListener('DOMContentLoaded', () => {
-    const slider = document.getElementById('main-slider'); // Phải khớp với ID trong HTML
-    if (!slider) return; // Kiểm tra an toàn
-    const slides = document.querySelectorAll('.slide');
-    const dotsContainer = document.getElementById('dotsContainer');
-    let currentSlide = 0;
-    let autoPlayInterval;
 
-    // Tạo các chấm (dots)
-    slides.forEach((_, index) => {
-        const dot = document.createElement('div');
-        dot.classList.add('dot');
-        if (index === 0) dot.classList.add('active');
-        dot.addEventListener('click', () => { currentSlide = index; updateSlider(); startAutoPlay(); });
-        dotsContainer.appendChild(dot);
-    });
+    // --- 4. LOGIC MỞ/ĐÓNG THƯ, PHÁT NHẠC VÀ SLIDER ---
+    document.addEventListener('DOMContentLoaded', () => {
+      const envelopeBtn = document.getElementById('envelope-btn');
+      const letterContent = document.getElementById('letter-content');
+      const closeLetterBtn = document.getElementById('close-letter-btn');
+      const loveMusic = document.getElementById('love-music');
 
-    function updateSlider() {
-        slider.style.transform = `translateX(-${currentSlide * 100}%)`;
-        document.querySelectorAll('.dot').forEach((dot, i) => {
-            dot.classList.toggle('active', i === currentSlide);
+      const slider = document.getElementById('main-slider');
+      const slides = document.querySelectorAll('.slide');
+      const dotsContainer = document.getElementById('dotsContainer');
+      let currentSlide = 0;
+      let autoPlayInterval;
+
+      // Click Mở Thư
+      envelopeBtn.addEventListener('click', () => {
+        envelopeBtn.classList.add('hidden'); // Ẩn phong bì
+        letterContent.classList.add('show'); // Hiện thư
+        
+        // Phát nhạc
+        loveMusic.play().catch(error => {
+          console.log("Autoplay blocked:", error);
         });
-    }
 
-    function moveSlide(direction) {
-        currentSlide = (currentSlide + direction + slides.length) % slides.length;
-        updateSlider();
-    }
+        // Kích hoạt slider
+        initSlider();
+      });
 
-    function startAutoPlay() {
+      // Click Đóng Thư
+      closeLetterBtn.addEventListener('click', () => {
+        letterContent.classList.remove('show'); // Ẩn thư đi mượt mà
+        
+        // Đợi hiệu ứng transition ẩn thư hoàn tất rồi hiện lại phong bì
+        setTimeout(() => {
+          envelopeBtn.classList.remove('hidden');
+        }, 500);
+
+        // Tạm dừng nhạc
+        loveMusic.pause();
+        
+        // Dừng slider tự động chạy
         clearInterval(autoPlayInterval);
-        autoPlayInterval = setInterval(() => moveSlide(1), 3000);
-    }
+      });
 
-    document.querySelector('.prev-btn').addEventListener('click', () => { moveSlide(-1); startAutoPlay(); });
-    document.querySelector('.next-btn').addEventListener('click', () => { moveSlide(1); startAutoPlay(); });
+      function initSlider() {
+        dotsContainer.innerHTML = ''; 
 
-    startAutoPlay();
-});
+        slides.forEach((_, index) => {
+          const dot = document.createElement('div');
+          dot.classList.add('dot');
+          if (index === 0) dot.classList.add('active');
+          dot.addEventListener('click', () => { 
+            currentSlide = index; 
+            updateSlider(); 
+            startAutoPlay(); 
+          });
+          dotsContainer.appendChild(dot);
+        });
+
+        function updateSlider() {
+          slider.style.transform = `translateX(-${currentSlide * 100}%)`;
+          document.querySelectorAll('.dot').forEach((dot, i) => {
+            dot.classList.toggle('active', i === currentSlide);
+          });
+        }
+
+        function moveSlide(direction) {
+          currentSlide = (currentSlide + direction + slides.length) % slides.length;
+          updateSlider();
+        }
+
+        function startAutoPlay() {
+          clearInterval(autoPlayInterval);
+          autoPlayInterval = setInterval(() => moveSlide(1), 3500);
+        }
+
+        document.querySelector('.prev-btn').addEventListener('click', () => { 
+          moveSlide(-1); 
+          startAutoPlay(); 
+        });
+        
+        document.querySelector('.next-btn').addEventListener('click', () => { 
+          moveSlide(1); 
+          startAutoPlay(); 
+        });
+
+        startAutoPlay();
+      }
+    });
   </script>
 </body>
 </html>
