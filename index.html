@@ -70,7 +70,7 @@
     .glass-box {
       pointer-events: auto;
     }
-
+    
     /* Khắc phục lỗi vị trí của Canvas khi hạ cánh */
     #canvas-container.landed {
       position: absolute; 
@@ -1185,8 +1185,30 @@
       const slider = document.getElementById('main-slider');
       const slides = document.querySelectorAll('.slide');
       const dotsContainer = document.getElementById('dotsContainer');
+      const letterTextContainer = document.querySelector('.letter-text');
+      
       let currentSlide = 0;
-      let autoPlayInterval;
+      let autoPlayInterval = null;
+      let isTransitioning = false; // Cờ chặn người dùng click dồn dập gây xung đột giá trị
+      let isSliderAllowed = false; // Cờ xác định xem đã đọc hết thư chưa
+
+      // Tạo style cho cuộn thư mượt mà và trực quan hơn
+      letterTextContainer.style.maxHeight = "400px";
+      letterTextContainer.style.overflowY = "auto";
+      letterTextContainer.style.paddingRight = "10px";
+
+      // Lắng nghe sự kiện đọc hết thư bằng hành vi cuộn chuột
+      letterTextContainer.addEventListener('scroll', () => {
+        if (isSliderAllowed) return; // Nếu đã kích hoạt rồi thì bỏ qua
+        
+        // Kiểm tra xem đã cuộn sát hoặc gần sát đáy chưa (sai số 5px)
+        const isAtBottom = letterTextContainer.scrollHeight - letterTextContainer.scrollTop <= letterTextContainer.clientHeight + 5;
+        
+        if (isAtBottom) {
+          isSliderAllowed = true;
+          startAutoPlay(); // Bắt đầu chạy slider tự động ngay khi đọc xong
+        }
+      });
 
       // Click Mở Thư
       envelopeBtn.addEventListener('click', () => {
@@ -1198,7 +1220,7 @@
           console.log("Autoplay blocked:", error);
         });
 
-        // Kích hoạt slider
+        // Khởi tạo các nút bấm/chấm tròn của Slider
         initSlider();
       });
 
@@ -1211,57 +1233,83 @@
           envelopeBtn.classList.remove('hidden');
         }, 500);
 
-        // Tạm dừng nhạc
+        // Tạm dừng nhạc và reset vị trí bài hát
         loveMusic.pause();
+        loveMusic.currentTime = 0;
         
-        // Dừng slider tự động chạy
+        // Dừng slider và reset trạng thái đọc thư
         clearInterval(autoPlayInterval);
+        autoPlayInterval = null;
+        isSliderAllowed = false;
+        currentSlide = 0;
+        slider.style.transform = `translateX(0%)`;
+        letterTextContainer.scrollTop = 0; // Cuộn thư lên đầu lại cho lần sau
       });
 
       function initSlider() {
         dotsContainer.innerHTML = ''; 
 
+        // Khởi tạo các dot điều hướng
         slides.forEach((_, index) => {
           const dot = document.createElement('div');
           dot.classList.add('dot');
           if (index === 0) dot.classList.add('active');
+          
           dot.addEventListener('click', () => { 
+            if (isTransitioning) return; // Đang chuyển động thì không cho bấm
             currentSlide = index; 
             updateSlider(); 
-            startAutoPlay(); 
+            if (isSliderAllowed) startAutoPlay(); // Chỉ reset autoplay nếu đã được phép chạy
           });
           dotsContainer.appendChild(dot);
         });
 
-        function updateSlider() {
-          slider.style.transform = `translateX(-${currentSlide * 100}%)`;
-          document.querySelectorAll('.dot').forEach((dot, i) => {
-            dot.classList.toggle('active', i === currentSlide);
-          });
-        }
-
-        function moveSlide(direction) {
-          currentSlide = (currentSlide + direction + slides.length) % slides.length;
-          updateSlider();
-        }
-
-        function startAutoPlay() {
-          clearInterval(autoPlayInterval);
-          autoPlayInterval = setInterval(() => moveSlide(1), 3500);
-        }
-
-        document.querySelector('.prev-btn').addEventListener('click', () => { 
-          moveSlide(-1); 
-          startAutoPlay(); 
+        // Lắng nghe khi slider chạy hiệu ứng xong thì mở khóa cho bấm tiếp
+        slider.addEventListener('transitionend', () => {
+          isTransitioning = false;
         });
-        
-        document.querySelector('.next-btn').addEventListener('click', () => { 
-          moveSlide(1); 
-          startAutoPlay(); 
-        });
-
-        startAutoPlay();
       }
+
+      function updateSlider() {
+        isTransitioning = true; // Khóa slider lại
+        slider.style.transform = `translateX(-${currentSlide * 100}%)`;
+        
+        // Cập nhật trạng thái active cho dot tương ứng
+        const allDots = document.querySelectorAll('.dot');
+        allDots.forEach((dot, i) => {
+          dot.classList.toggle('active', i === currentSlide);
+        });
+      }
+
+      function moveSlide(direction) {
+        if (isTransitioning) return; // Chặn bấm nếu giá trị chưa nhảy xong
+        currentSlide = (currentSlide + direction + slides.length) % slides.length;
+        updateSlider();
+      }
+
+      function startAutoPlay() {
+        clearInterval(autoPlayInterval);
+        if (!isSliderAllowed) return; // Nếu chưa đọc hết thư thì không kích hoạt autoPlay
+        
+        autoPlayInterval = setInterval(() => {
+          if (!isTransitioning) {
+            moveSlide(1);
+          }
+        }, 3500);
+      }
+
+      // Đính kèm sự kiện cho nút Prev & Next
+      document.querySelector('.prev-btn').addEventListener('click', () => { 
+        if (isTransitioning) return;
+        moveSlide(-1); 
+        if (isSliderAllowed) startAutoPlay(); 
+      });
+      
+      document.querySelector('.next-btn').addEventListener('click', () => { 
+        if (isTransitioning) return;
+        moveSlide(1); 
+        if (isSliderAllowed) startAutoPlay(); 
+      });
     });
   </script>
 </body>
